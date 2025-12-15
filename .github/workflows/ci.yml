@@ -16,11 +16,11 @@ jobs:
 
       # 2. Build backend Docker image
       - name: Build Backend
-        run: docker build -t tp-examen-chat ./backend
+        run: docker build -t tp-examen-chat ./Backend
 
       # 3. Build frontend Docker image
       - name: Build Frontend
-        run: docker build -t tp-examen-chat ./frontend
+        run: docker build -t tp-examen-chat ./Frontend
 
       # 4. Lister les images Docker pour vérification
       - name: List Docker images
