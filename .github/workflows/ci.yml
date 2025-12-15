@@ -2,38 +2,24 @@ name: CI/CD Mini Chat
 
 on:
   push:
-    branches:
-      - main
+    branches: [ main ]
 
 jobs:
-  build-and-deploy:
-    name: Build & Deploy Frontend + Backend
+  build:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout repo
+      - name: Checkout code
         uses: actions/checkout@v3
 
-      # ---------- Backend ----------
-      - name: Setup Node.js for Backend
-        uses: actions/setup-node@v3
-        with:
-          node-version: 18
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
 
-      - name: Install Backend dependencies
-        working-directory: ./backend
-        run: npm install
+      - name: Build Backend Image
+        run: docker build -t tp-backend ./backend
 
-      - name: Run Backend server (optional)
-        working-directory: ./backend
-        run: echo "Backend build complete"
+      - name: Build Frontend Image
+        run: docker build -t tp-frontend ./frontend
 
-      # ---------- Frontend ----------
-      - name: Build Frontend Docker image
-        run: docker build -t tp-exam-chat-frontend ./frontend
-
-      - name: Run Frontend build (optional)
-        run: echo "Frontend build complete"
-
-      # ---------- Deploy (Local Docker example) ----------
-      - name: Start services with Docker Compose
-        run: docker-compose up --build -d
+      - name: List Docker Images
+        run: docker images
