@@ -1,62 +1,78 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Mini Chat</title>
   <style>
-    body { font-family: Arial, sans-serif; margin: 20px; }
-    #messages { border: 1px solid #ccc; height: 300px; overflow-y: scroll; padding: 10px; margin-bottom: 10px; }
-    input { padding: 5px; margin-right: 5px; }
-    button { padding: 5px 10px; }
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 600px;
+      margin: auto;
+      padding: 20px;
+    }
+    #messages {
+      border: 1px solid #ccc;
+      height: 300px;
+      overflow-y: auto;
+      padding: 10px;
+      margin-bottom: 10px;
+    }
+    input, button {
+      width: 100%;
+      padding: 10px;
+      margin: 5px 0;
+    }
   </style>
 </head>
 <body>
+
   <h2>Mini Chat</h2>
-  <input id="pseudo" placeholder="Pseudo">
+
+  <input id="pseudo" placeholder="Pseudo" />
+
   <div id="messages"></div>
-  <input id="content" placeholder="Message">
+
+  <input id="content" placeholder="Message" />
   <button onclick="sendMessage()">Envoyer</button>
 
   <script>
-    // URL du backend (Docker Compose mappe le port 3000)
-    const backendUrl = 'http://localhost:3000/api/messages';
+    const backendUrl = "https://tp-exam-chat-1-l67x.onrender.com/api/messages";
 
     async function fetchMessages() {
-      try {
-        const res = await fetch(backendUrl);
-        const data = await res.json();
-        const messagesDiv = document.getElementById('messages');
-        messagesDiv.innerHTML = data.map(m => `<b>${m.author}</b> [${new Date(m.timestamp).toLocaleTimeString()}]: ${m.content}`).join('<br>');
-        messagesDiv.scrollTop = messagesDiv.scrollHeight; // scroll automatique vers le bas
-      } catch (err) {
-        console.error('Erreur fetch messages:', err);
-      }
+      const res = await fetch(backendUrl);
+      const data = await res.json();
+
+      const messagesDiv = document.getElementById("messages");
+      messagesDiv.innerHTML = data
+        .map(
+          m =>
+            `<p><b>${m.author}</b> [${new Date(m.timestamp).toLocaleTimeString()}] : ${m.content}</p>`
+        )
+        .join("");
     }
 
     async function sendMessage() {
-      const author = document.getElementById('pseudo').value.trim();
-      const content = document.getElementById('content').value.trim();
+      const author = document.getElementById("pseudo").value;
+      const content = document.getElementById("content").value;
 
-      if (!author || !content) return alert('Pseudo et message requis !');
+      if (!author || !content) return;
 
-      try {
-        await fetch(backendUrl, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ author, content })
-        });
-        document.getElementById('content').value = '';
-        fetchMessages();
-      } catch (err) {
-        console.error('Erreur send message:', err);
-      }
+      await fetch(backendUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ author, content })
+      });
+
+      document.getElementById("content").value = "";
+      fetchMessages();
     }
 
-    // Rafraîchir les messages toutes les 3 secondes
-    setInterval(fetchMessages, 3000);
     fetchMessages();
+    setInterval(fetchMessages, 3000);
   </script>
+
 </body>
 </html>
 
+     
